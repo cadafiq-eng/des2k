@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DOE 2ᵏ — Diseño y análisis factorial</title>
+  <meta name="description" content="Diseño y análisis de experimentos factoriales 2^k completos y fraccionados, con bloques y puntos centrales.">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="DOE 2ᵏ">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="appbar">
+  <div class="brand"><span class="logo">2<sup>k</sup></span><div><strong>DOE 2ᵏ</strong><small>Diseño y análisis de experimentos factoriales</small></div></div>
+  <div class="bar-actions">
+    <button id="btnInstall" class="ghost" hidden>⤓ Instalar app</button>
+    <button id="btnExport" class="ghost">Exportar resultados (CSV)</button>
+    <button id="btnPrint" class="ghost">Imprimir reporte</button>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="design" class="active">1 · Diseño</button>
+  <button role="tab" data-tab="data">2 · Datos</button>
+  <button role="tab" data-tab="analysis">3 · Análisis</button>
+  <button role="tab" data-tab="plots">4 · Gráficas</button>
+  <button role="tab" data-tab="diag">5 · Supuestos</button>
+  <button role="tab" data-tab="opt">6 · Predicción</button>
+  <button role="tab" data-tab="help">Ayuda</button>
+</nav>
+
+<main>
+<!-- ======================= DISEÑO ======================= -->
+<section id="tab-design" class="tab active">
+  <div class="card">
+    <h2>Factores y tipo de diseño</h2>
+    <div class="grid4">
+      <label>Número de factores (k)
+        <select id="dK"></select></label>
+      <label>Tipo de diseño
+        <select id="dType"><option value="full">Factorial completo 2ᵏ</option><option value="frac">Factorial fraccionado 2ᵏ⁻ᵖ</option></select></label>
+      <label id="wrapP" hidden>Fracción
+        <select id="dP"></select></label>
+      <label>Réplicas
+        <input type="number" id="dReps" min="1" max="20" value="1"></label>
+    </div>
+    <div id="genWrap" hidden class="gen-row">
+      <label>Generadores de la fracción
+        <input id="dGens" spellcheck="false" placeholder="D=ABC"></label>
+      <button id="btnStdGens" class="ghost">Generadores estándar</button>
+      <p class="hint">Formato: <code>E=ABC, F=-BCD</code>. El signo “−” produce la fracción alterna. Los generadores estándar dan la máxima resolución.</p>
+    </div>
+    <div class="table-wrap"><table class="tbl" id="factorTable"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>Bloques, puntos centrales y aleatorización</h2>
+    <div class="grid4">
+      <label>Bloqueo
+        <select id="dBlockMode">
+          <option value="none">Sin bloques</option>
+          <option value="reps">Cada réplica es un bloque</option>
+          <option value="conf">Confundir efectos con bloques</option>
+        </select></label>
+      <label id="wrapNB" hidden>Bloques por réplica
+        <select id="dNB"></select></label>
+      <label>Puntos centrales (por bloque)
+        <input type="number" id="dCP" min="0" max="30" value="0"></label>
+      <label>Semilla de aleatorización
+        <input type="number" id="dSeed" value="2026"></label>
+    </div>
+    <div id="bgWrap" hidden class="gen-row">
+      <label>Generadores de bloque (contrastes confundidos)
+        <input id="dBGens" spellcheck="false" placeholder="ABC"></label>
+      <button id="btnAutoBG" class="ghost">Elegir automáticamente</button>
+      <p class="hint">Escriba palabras separadas por comas (p. ej. <code>ABC, CDE</code>). El modo automático minimiza la confusión de efectos principales e interacciones de dos factores.</p>
+    </div>
+    <label class="check"><input type="checkbox" id="dRand" checked> Aleatorizar el orden de corrida (dentro de cada bloque)</label>
+    <p class="hint">Los puntos centrales requieren factores cuantitativos; permiten estimar el error puro y probar curvatura.</p>
+    <div class="actions"><button id="btnGen" class="primary">Generar diseño</button></div>
+  </div>
+  <div id="designMsg"></div>
+  <div id="designOut"></div>
+</section>
+
+<!-- ======================= DATOS ======================= -->
+<section id="tab-data" class="tab">
+  <div class="card">
+    <h2>Cargar datos</h2>
+    <div class="grid3">
+      <div>
+        <label>Archivo Excel (.xlsx, .xls), ODS, CSV o TXT
+          <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm,.ods,.csv,.txt,.tsv,text/csv,text/plain,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.oasis.opendocument.spreadsheet"></label>
+        <label id="sheetWrap" hidden>Hoja del libro
+          <select id="sheetSel"></select></label>
+        <p class="hint">En Excel se usa la primera fila con encabezados de la hoja elegida (se omiten filas de título). En CSV: separador coma, punto y coma o tabulador; decimales con coma si el separador es “;”.</p>
+      </div>
+      <div>
+        <label>Conjuntos de ejemplo
+          <select id="exampleSel">
+            <option value="">— Elegir —</option>
+            <option value="filt">2⁴ sin réplica: tasa de filtración (Montgomery 6.2)</option>
+            <option value="filtBlk">2⁴ en 2 bloques, ABCD confundida (Montgomery 7.2)</option>
+            <option value="frac">2⁴⁻¹ (I = ABCD): tasa de filtración (Montgomery 8.1)</option>
+            <option value="etch">2³ con 2 réplicas: grabado por plasma (Montgomery 6.1)</option>
+            <option value="center">2² con 5 puntos centrales: rendimiento (Montgomery 6.7)</option>
+          </select></label>
+      </div>
+      <div>
+        <label>Pegar desde hoja de cálculo
+          <textarea id="pasteArea" rows="3" placeholder="Copie las celdas (con encabezados) y péguelas aquí"></textarea></label>
+        <button id="btnPaste" class="ghost">Usar datos pegados</button>
+      </div>
+    </div>
+  </div>
+  <div id="dataMsg"></div>
+  <div id="mapCard" class="card" hidden>
+    <h2>Asignar columnas</h2>
+    <div class="grid4">
+      <label>Respuesta (y)<select id="mResp"></select></label>
+      <label>Bloque (opcional)<select id="mBlock"></select></label>
+      <label>Orden de corrida (opcional)<select id="mRun"></select></label>
+      <label>Transformación de y
+        <span class="inline"><select id="mTrans"><option value="none">Ninguna</option><option value="ln">ln(y)</option><option value="log10">log₁₀(y)</option><option value="sqrt">√y</option><option value="inv">1/y</option><option value="pow">y^λ</option></select>
+        <input type="number" id="mLambda" step="0.1" value="0.5" hidden title="λ"></span></label>
+    </div>
+    <p class="lbl">Factores (en el orden en que recibirán las letras A, B, C…):</p>
+    <div id="mFactors" class="chips"></div>
+    <p class="hint">Los niveles se codifican automáticamente: mínimo → −1, máximo → +1 y el punto medio → 0. Para factores de texto con dos niveles se usa el orden alfabético.</p>
+    <div class="actions"><button id="btnAnalyze" class="primary">Analizar</button></div>
+    <h3>Vista previa</h3>
+    <div class="table-wrap short" id="preview"></div>
+  </div>
+</section>
+
+<!-- ======================= ANÁLISIS ======================= -->
+<section id="tab-analysis" class="tab">
+  <div id="anEmpty" class="empty">Cargue datos y presione <b>Analizar</b> en la pestaña Datos.</div>
+  <div id="anBody" hidden class="an-layout">
+    <aside class="card side">
+      <h2>Modelo</h2>
+      <div class="opts">
+        <label>α <input type="number" id="oAlpha" min="0.001" max="0.2" step="0.01" value="0.05"></label>
+        <label>Orden máx. en alias <select id="oAliasOrd"><option>2</option><option selected>3</option><option>4</option><option value="9">todo</option></select></label>
+        <label class="check"><input type="checkbox" id="oBlocks" checked> Incluir bloques</label>
+        <label class="check"><input type="checkbox" id="oCurv" checked> Incluir término de curvatura</label>
+      </div>
+      <div class="btn-grid">
+        <button class="ghost sm" data-sel="all">Todos</button>
+        <button class="ghost sm" data-sel="1">Principales</button>
+        <button class="ghost sm" data-sel="2">Hasta 2FI</button>
+        <button class="ghost sm" data-sel="3">Hasta 3FI</button>
+        <button class="ghost sm" data-sel="lenth">Significativos (Lenth)</button>
+        <button class="ghost sm" data-sel="reduce">Reducir (p &gt; α)</button>
+      </div>
+      <div id="termList" class="term-list"></div>
+      <div id="termNotes" class="hint"></div>
+    </aside>
+    <div class="results">
+      <div id="anMsg"></div>
+      <div id="anInfo" class="card"></div>
+      <div id="anCoef" class="card"></div>
+      <div id="anAnova" class="card"></div>
+      <div id="anLenth" class="card"></div>
+      <div id="anEq" class="card"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= GRÁFICAS ======================= -->
+<section id="tab-plots" class="tab">
+  <div id="plEmpty" class="empty">Primero realice el análisis.</div>
+  <div id="plBody" hidden>
+    <div class="plot-grid">
+      <div class="card" id="plPareto"></div>
+      <div class="card" id="plNormal"></div>
+      <div class="card" id="plHalf"></div>
+    </div>
+    <div class="card" id="plMain"></div>
+    <div class="card">
+      <h2>Interacciones</h2>
+      <div id="plInter" class="plot-grid small"></div>
+    </div>
+    <div class="plot-grid">
+      <div class="card">
+        <h2>Gráfica de cubo (valores ajustados)</h2>
+        <div class="inline"><select id="cubeA"></select><select id="cubeB"></select><select id="cubeC"></select></div>
+        <div id="plCube"></div>
+      </div>
+      <div class="card">
+        <h2>Contorno de la superficie ajustada</h2>
+        <div class="inline"><label>Eje X <select id="ctX"></select></label><label>Eje Y <select id="ctY"></select></label></div>
+        <div id="ctHold" class="holds"></div>
+        <div id="plContour"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= SUPUESTOS ======================= -->
+<section id="tab-diag" class="tab">
+  <div id="dgEmpty" class="empty">Primero realice el análisis.</div>
+  <div id="dgBody" hidden>
+    <div id="dgMsg"></div>
+    <div class="card" id="dgTests"></div>
+    <div class="plot-grid" id="dgPlots"></div>
+    <div class="card" id="dgBoxcox"></div>
+    <div class="card" id="dgPoints"></div>
+  </div>
+</section>
+
+<!-- ======================= PREDICCIÓN ======================= -->
+<section id="tab-opt" class="tab">
+  <div id="opEmpty" class="empty">Primero realice el análisis.</div>
+  <div id="opBody" hidden>
+    <div class="card">
+      <h2>Predicción en un punto</h2>
+      <div id="opInputs" class="grid4"></div>
+      <div class="actions"><button id="btnPredict" class="primary">Predecir</button></div>
+      <div id="opPred"></div>
+    </div>
+    <div class="card">
+      <h2>Búsqueda de la mejor combinación</h2>
+      <div class="grid4">
+        <label>Objetivo <select id="opGoal"><option value="max">Maximizar</option><option value="min">Minimizar</option><option value="target">Alcanzar un valor meta</option></select></label>
+        <label id="opTargetWrap" hidden>Valor meta <input type="number" id="opTarget" step="any"></label>
+        <label>Región explorada <select id="opRegion"><option value="corners">Vértices (−1, +1)</option><option value="grid3">Malla −1, 0, +1</option><option value="grid5">Malla −1, −0.5, 0, 0.5, +1</option></select></label>
+      </div>
+      <div class="actions"><button id="btnOptimize" class="primary">Buscar</button></div>
+      <div id="opRes"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= AYUDA ======================= -->
+<section id="tab-help" class="tab">
+  <div class="card prose" id="helpContent"></div>
+</section>
+</main>
+
+<div id="printArea" class="print-only"></div>
+<footer class="foot">DOE 2ᵏ · funciona sin conexión una vez instalada · los cálculos se realizan en su dispositivo</footer>
+
+<script src="js/stats.js"></script>
+<script src="js/design.js"></script>
+<script src="js/analysis.js"></script>
+<script src="js/plots.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
