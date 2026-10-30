@@ -42,3 +42,7 @@ La lectura de Excel usa SheetJS Community Edition 0.18.5 (`js/xlsx.full.min.js`)
 ## Validación
 
 Los resultados reproducen los ejemplos de Montgomery, *Design and Analysis of Experiments* (incluidos como conjuntos de ejemplo): 6.1 (2³ replicado), 6.2 (2⁴ sin réplica, Lenth), 6.7 (puntos centrales y curvatura), 7.2 (2⁴ en dos bloques) y 8.1 (2⁴⁻¹). Las distribuciones y la prueba de Shapiro-Wilk coinciden con SciPy.
+
+
+## Actualización 1.2.0
+Consulte CAMBIOS.md para uso, fórmulas y publicación, y PRUEBAS.md para resultados y límites de verificación.

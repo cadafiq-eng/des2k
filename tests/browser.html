@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="../css/styles.css"><button id="themeToggle"></button><main><div id="poolPanel" class="card"></div><div id="powerPanel" class="card"></div><pre id="testResult">PENDING</pre></main><script src="../js/stats.js"></script><script src="../js/design.js"></script><script src="../js/analysis.js"></script><script src="../js/modules.js"></script><script>
+try{
+const X=[],y=[];for(let r=0;r<2;r++)for(let i=0;i<4;i++){const x=[i&1?1:-1,i&2?1:-1];X.push(x);y.push(5+2*x[0]+.1*x[0]*x[1]+(r?.5:-.5));}
+const state={prep:Analysis.prepare({X,y}),terms:[1,2,3],opts:{alpha:.05,blocks:false,curv:false},est:{estimable:[1,2,3]}};
+function run(){state.fit=Analysis.fit(state.prep,state.terms,state.opts);GEnhance(state,run);}run();
+const check=(v,m)=>{if(!v)throw Error(m)};
+document.getElementById('pwCalculate').click();check(document.getElementById('powerResult').textContent.includes('Potencia actual'),'power');
+check(document.querySelector('#poolPanel input[value="1"]').disabled,'hierarchy');
+document.querySelector('#poolPanel input[value="3"]').checked=true;document.getElementById('poolApply').click();check(state.terms.length===2,'pool');check(document.getElementById('poolReport').textContent.includes('Error anterior'),'comparison');
+document.getElementById('poolUndo').click();check(state.terms.length===3,'undo');
+document.getElementById('themeToggle').click();check(document.documentElement.dataset.theme!=='system','theme');
+document.getElementById('testResult').textContent='PASS: potencia, jerarquía, pooling, comparación, restauración y tema.';
+}catch(e){document.getElementById('testResult').textContent='FAIL '+e.stack;}
+</script>
