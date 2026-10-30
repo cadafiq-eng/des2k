@@ -16,7 +16,7 @@
 <body>
 <header class="appbar">
   <div class="brand"><span class="logo">2<sup>k</sup></span><div><strong>DOE 2ᵏ</strong><small>Diseño y análisis de experimentos factoriales</small></div></div>
-  <div class="bar-actions">
+  <div class="bar-actions"><button id="themeToggle" class="ghost">Tema: sistema</button>
     <button id="btnInstall" class="ghost" hidden>⤓ Instalar app</button>
     <button id="btnExport" class="ghost">Exportar resultados (CSV)</button>
     <button id="btnPrint" class="ghost">Imprimir reporte</button>
@@ -162,7 +162,7 @@
     </aside>
     <div class="results">
       <div id="anMsg"></div>
-      <div id="anInfo" class="card"></div>
+      <div id="poolPanel" class="card"></div><div id="powerPanel" class="card"></div><div id="anInfo" class="card"></div>
       <div id="anCoef" class="card"></div>
       <div id="anAnova" class="card"></div>
       <div id="anLenth" class="card"></div>
@@ -249,6 +249,7 @@
 <script src="js/design.js"></script>
 <script src="js/analysis.js"></script>
 <script src="js/plots.js"></script>
+<script src="js/modules.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

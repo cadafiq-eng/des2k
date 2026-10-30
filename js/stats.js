@@ -93,7 +93,7 @@
 
   S.tcdf = (t, df) => { const tail = 0.5 * S.ibeta(df / (df + t * t), df / 2, 0.5); return t > 0 ? 1 - tail : tail; };
   /** valor p bilateral de t */
-  S.tp2 = (t, df) => (!isFinite(t) ? 0 : S.ibeta(df / (df + t * t), df / 2, 0.5));
+  S.tp2 = (t, df) => (Number.isNaN(t) ? NaN : !isFinite(t) ? 0 : S.ibeta(df / (df + t * t), df / 2, 0.5));
   S.tinv = function (p, df) {
     if (p === 0.5) return 0;
     if (p < 0.5) return -S.tinv(1 - p, df);
@@ -278,6 +278,34 @@
   S.rng = function (seed) {
     let a = seed >>> 0;
     return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  };
+
+  // Cola F no central: mezcla Poisson centrada en su moda para evitar underflow.
+  S.ncfSF = function(x, d1, d2, lambda) {
+    if (!(d1>0 && d2>0 && lambda>=0 && Number.isFinite(lambda))) throw Error('Parámetros F inválidos.');
+    if (x<=0) return 1;
+    if (lambda===0) return S.fsf(x,d1,d2);
+    const mu=lambda/2, m=Math.floor(mu);
+    if (mu>100000) throw Error('No centralidad fuera del rango numérico (λ ≤ 200000).');
+    const z=d2/(d2+d1*x), b=d2/2;
+    const w0=Math.exp(-mu+m*Math.log(mu)-S.lgamma(m+1));
+    let sum=w0*S.ibeta(z,b,d1/2+m), mass=w0, w=w0;
+    for(let j=m;j>0;j--) { w*=j/mu; sum+=w*S.ibeta(z,b,d1/2+j-1); mass+=w; if(w<1e-15 && j<mu) break; }
+    w=w0;
+    for(let j=m+1;j<m+10000;j++) { w*=mu/j; sum+=w*S.ibeta(z,b,d1/2+j); mass+=w; if(w<1e-15 && j>mu) break; }
+    if (mass<0.99999999) throw Error('La mezcla F no convergió.');
+    return Math.max(0,Math.min(1,sum/mass));
+  };
+  S.fcritical = function(alpha,d1,d2) {
+    if (!(alpha>0 && alpha<1 && d1>0 && d2>0)) throw Error('α o grados de libertad inválidos.');
+    let lo=0,hi=1;
+    while(S.fsf(hi,d1,d2)>alpha && hi<1e16) hi*=2;
+    for(let i=0;i<100;i++){const mid=(lo+hi)/2;if(S.fsf(mid,d1,d2)>alpha)lo=mid;else hi=mid;}
+    return (lo+hi)/2;
+  };
+  S.effectPower = function(effect,sigma,vjj,df,alpha) {
+    if (![effect,sigma,vjj,df,alpha].every(Number.isFinite) || effect<0 || sigma<=0 || vjj<=0 || df<=0) throw Error('Use efecto ≥ 0, σ > 0 y gl de error > 0.');
+    return S.ncfSF(S.fcritical(alpha,1,df),1,df,(effect/2)**2/(sigma*sigma*vjj));
   };
 
   G.Stats = S;

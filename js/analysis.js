@@ -283,6 +283,18 @@
   };
   A.closeHierarchy = (terms, estimable) => [...new Set([...terms, ...A.hierarchyMissing(terms, estimable)])].sort(D.cmpWord);
 
+  /** Pooling por reajuste anidado; no suma SC ajustadas no ortogonales. */
+  A.pool = function(prep, terms, removed, opts, estimable) {
+    if (!removed.length || removed.some(w => !terms.includes(w))) throw Error('Seleccione términos del modelo actual.');
+    if (A.hierarchyMissing(terms, estimable).length) throw Error('Complete primero la jerarquía del modelo.');
+    const keep = terms.filter(w => !removed.includes(w));
+    if (A.hierarchyMissing(keep, estimable).length) throw Error('No se puede agrupar un término requerido por una interacción conservada.');
+    const before = A.fit(prep, terms, opts), after = A.fit(prep, keep, opts);
+    return {before, after, terms: keep, removed: removed.slice(),
+      df: after.summary.dfE-before.summary.dfE,
+      ss: Math.max(0, after.summary.sse-before.summary.sse)};
+  };
+
   /** Eliminación hacia atrás respetando jerarquía */
   A.reduce = function (prep, terms, opts) {
     let cur = terms.slice(); const alpha = opts.alpha || 0.05; const removed = [];

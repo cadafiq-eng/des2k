@@ -474,6 +474,7 @@
 
   function renderAnalysis() {
     renderTermList();
+    GEnhance(state, runModel);
     const prep = state.prep, fit = state.fit, est = state.est, sm = fit.summary, a = state.opts.alpha;
     const warn = [];
     prep.notes.forEach(n => warn.push(['info', n]));
