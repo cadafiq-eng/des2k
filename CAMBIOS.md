@@ -1,3 +1,10 @@
+# DOE 2ᵏ · versión 1.2.1 — 5 noviembre 2026
+
+- Aviso en "Generadores de bloque" con dos formas de definir los bloques: (1) seleccionar y escribir los generadores, advirtiendo que el botón automático elige una de varias combinaciones equivalentes (p. ej., en 2⁴ en 4 bloques propone ACD, BCD, que confunde AB) y (2) diseño definido por el usuario capturado en la pestaña Datos con columna Bloque y factores codificados.
+- Corrección: los factores capturados con signos `+`/`-` (también `−` y `–` tipográficos, y `+1`/`−1`) se leen como +1/−1. Antes se trataban como texto y, por orden alfabético, `+` quedaba como nivel bajo, lo que invertía el signo de todos los efectos sin aviso.
+- Indicación en Datos sobre los formatos de codificación aceptados. Caché PWA actualizada a v1.2.1.
+- Verificado con el caso 2⁴ en 4 bloques (ABC, ABD) capturado con signos: efectos y confusión con bloques (CD, ABC, ABD) idénticos a la captura con −1/1.
+
 # DOE 2ᵏ · versión 1.2.0 — 30 octubre 2026
 
 Se conserva la aplicación original: diseños completos y fraccionados, importación CSV/Excel, bloques, centros, alias, gráficas, diagnósticos y predicción.

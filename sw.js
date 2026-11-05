@@ -1,5 +1,5 @@
 /* Service worker: precarga de recursos para uso sin conexión */
-const CACHE = 'doe2k-v1.2.0';
+const CACHE = 'doe2k-v1.2.1';
 const ASSETS = ['./', './index.html', './css/styles.css', './js/stats.js', './js/design.js', './js/analysis.js', './js/plots.js', './js/app.js', './js/modules.js', './js/xlsx.full.min.js',
   './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting())); });
