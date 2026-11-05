@@ -78,6 +78,12 @@
         <input id="dBGens" spellcheck="false" placeholder="ABC"></label>
       <button id="btnAutoBG" class="ghost">Elegir automáticamente</button>
       <p class="hint">Escriba palabras separadas por comas (p. ej. <code>ABC, CDE</code>). El modo automático minimiza la confusión de efectos principales e interacciones de dos factores.</p>
+      <div class="msg info bg-note"><b>Dos formas de definir los bloques:</b>
+        <ol>
+          <li><b>Seleccione sus generadores</b> y escríbalos en este campo. El botón automático elige <i>una</i> de varias combinaciones equivalentes y puede confundir con los bloques una interacción importante para su proceso; elija con base en el conocimiento del proceso.</li>
+          <li><b>Diseño definido por el usuario:</b> si los bloques ya están asignados corrida por corrida (caso de clase, libro o experimento ya realizado), capture la tabla en la pestaña <b>Datos</b> con una columna <code>Bloque</code>, una columna por factor en códigos (<code>-1</code>/<code>1</code> o <code>-</code>/<code>+</code>; <code>0</code> en los centros) y la respuesta. La app detecta los efectos confundidos a partir de los datos.</li>
+        </ol>
+      </div>
     </div>
     <label class="check"><input type="checkbox" id="dRand" checked> Aleatorizar el orden de corrida (dentro de cada bloque)</label>
     <p class="hint">Los puntos centrales requieren factores cuantitativos; permiten estimar el error puro y probar curvatura.</p>
@@ -113,6 +119,7 @@
       <div>
         <label>Pegar desde hoja de cálculo
           <textarea id="pasteArea" rows="3" placeholder="Copie las celdas (con encabezados) y péguelas aquí"></textarea></label>
+        <p class="hint">Los factores pueden capturarse en valores reales o en códigos: <code>-1</code>/<code>1</code>, o bien los signos <code>-</code>/<code>+</code> (se convierten a −1/+1); <code>0</code> para los puntos centrales.</p>
         <button id="btnPaste" class="ghost">Usar datos pegados</button>
       </div>
     </div>

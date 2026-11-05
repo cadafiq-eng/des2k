@@ -13,6 +13,12 @@
   const fmtP = p => (!isFinite(p) ? '—' : p < 0.0001 ? '&lt;0.0001' : p.toFixed(4));
   const fmtPtxt = p => (!isFinite(p) ? '' : p < 0.0001 ? '<0.0001' : p.toFixed(4));
   const msg = (el, type, html) => { $(el).innerHTML = html ? `<div class="msg ${type}">${html}</div>` : ''; };
+  /** Valor de factor: acepta números y los signos de codificación +, -, −, – (y +1/−1 con signo tipográfico) */
+  const numFactor = s => {
+    if (s == null) return NaN; const t = String(s).trim().replace(/\s/g, '').replace(/^[\u2212\u2013]/, '-');
+    if (t === '+') return 1; if (t === '-') return -1;
+    return num(t);
+  };
   const num = s => { if (s == null) return NaN; const t = String(s).trim().replace(/\s/g, ''); if (t === '') return NaN; const v = Number(t.replace(/,(?=\d+$)/, '.')); return isFinite(v) ? v : NaN; };
   const sup = n => String(n).replace(/[0-9-−]/g, c => ({ '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '−': '⁻' }[c]));
 
@@ -319,7 +325,7 @@
   };
 
   function colInfo(ds, j) {
-    const vals = ds.rows.map(r => r[j]).filter(v => v !== ''); const nums = vals.map(num);
+    const vals = ds.rows.map(r => r[j]).filter(v => v !== ''); const nums = vals.map(numFactor);
     const numeric = vals.length > 0 && nums.every(isFinite);
     const distinct = [...new Set(numeric ? nums : vals)];
     return { numeric, distinct: distinct.length, vals: distinct };
@@ -373,7 +379,7 @@
       if (T.nonneg && yRaw.some(v => v < 0)) throw new Error('La transformación √y requiere respuestas no negativas.');
       const y = yRaw.map(v => T.f(v, lam));
       const factors = fj.map((j, i) => {
-        const name = ds.headers[j]; const vals = rows.map(r => r[j]); const nums = vals.map(num);
+        const name = ds.headers[j]; const vals = rows.map(r => r[j]); const nums = vals.map(numFactor);
         const meta = ds.meta && ds.meta[name];
         if (nums.every(isFinite)) {
           let lo = Math.min(...nums), hi = Math.max(...nums);
