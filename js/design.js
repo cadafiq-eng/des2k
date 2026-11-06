@@ -135,6 +135,26 @@
     return bestSet ? bestSet.sort(D.cmpWord) : null;
   };
 
+  /**
+   * Valida generadores de bloque: independencia y que ninguna interacción generalizada
+   * (producto de cualquier subconjunto de generadores, con sus alias) sea un efecto principal.
+   * Devuelve null si son válidos o un mensaje de error.
+   */
+  D.checkBlockGens = function (blockGens, group) {
+    const G0 = [{ w: 0 }, ...(group || [])];
+    for (let mask = 1; mask < (1 << blockGens.length); mask++) {
+      let s = 0; const used = [];
+      blockGens.forEach((c, i) => { if ((mask >> i) & 1) { s ^= c; used.push(D.wname(c)); } });
+      if (s === 0 || (group || []).some(g => g.w === s)) return `Los generadores de bloque no son independientes: ${used.join(' × ')} = I (o coincide con la relación definidora).`;
+      const main = G0.map(g => s ^ g.w).filter(w => D.order(w) === 1);
+      if (main.length) {
+        const prodTxt = used.length > 1 ? `La interacción generalizada ${used.join(' × ')} = ${D.wname(s)}` : `El generador de bloque ${used[0]}`;
+        return `${prodTxt} confunde el efecto principal ${main.map(D.wname).join(', ')} con los bloques. Elija otros generadores.`;
+      }
+    }
+    return null;
+  };
+
   /** Efectos confundidos con bloques (con sus alias en diseños fraccionados) */
   D.blockConfounded = function (blockGens, group) {
     const out = []; const G0 = [{ w: 0, s: 1 }, ...group];

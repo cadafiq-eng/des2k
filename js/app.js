@@ -125,7 +125,7 @@
       const txt = $('dBGens').value.trim();
       blockGens = txt ? txt.split(/[,;\s]+/).filter(Boolean).map(w => D.parseWord(w, k)) : autoBlockGens();
       if (blockGens.length !== q) throw new Error(`Para ${1 << q} bloques se requieren ${q} generador(es) de bloque.`);
-      for (const w of blockGens) { const conf = D.blockConfounded([w], group)[0]; if (conf.some(x => D.order(x) === 1)) throw new Error(`El generador de bloque ${D.wname(w)} confunde un efecto principal con los bloques.`); }
+      const bgErr = D.checkBlockGens(blockGens, group); if (bgErr) throw new Error(bgErr);
     }
     const factors = state.factors.slice(0, k).map((f, i) => {
       const lo = num(f.low), hi = num(f.high); const numeric = isFinite(lo) && isFinite(hi);

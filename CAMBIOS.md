@@ -1,3 +1,8 @@
+# DOE 2ᵏ · versión 1.2.2 — 5 noviembre 2026
+
+- Corrección: la validación de generadores de bloque revisaba cada generador por separado, pero no sus interacciones generalizadas. Aceptaba, por ejemplo, ABC y ABCF en un 2⁶, cuyo producto confunde el efecto principal F con los bloques. Ahora `Design.checkBlockGens` revisa todos los productos de subconjuntos de generadores (con sus alias en diseños fraccionados) y también su independencia; el mensaje indica el producto que causa el problema.
+- Nuevas pruebas en `tests/bloques.cjs` (node tests/bloques.cjs). Caché PWA v1.2.2.
+
 # DOE 2ᵏ · versión 1.2.1 — 5 noviembre 2026
 
 - Aviso en "Generadores de bloque" con dos formas de definir los bloques: (1) seleccionar y escribir los generadores, advirtiendo que el botón automático elige una de varias combinaciones equivalentes (p. ej., en 2⁴ en 4 bloques propone ACD, BCD, que confunde AB) y (2) diseño definido por el usuario capturado en la pestaña Datos con columna Bloque y factores codificados.
