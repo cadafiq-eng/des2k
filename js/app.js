@@ -318,6 +318,12 @@
       [0, 1].forEach(r => stdRows(3).forEach((x, i) => rows.push([r + 1, x[0] < 0 ? 0.8 : 1.2, x[1] < 0 ? 125 : 200, x[2] < 0 ? 275 : 325, y[i][r]].map(String))));
       return { headers: ['Replica', 'Separacion_cm', 'Flujo_C2F6_sccm', 'Potencia_W', 'TasaGrabado'], rows };
     },
+    botana: () => {
+      const rows = [[60, 155, 19.5, 1.94, 436.23], [100, 155, 15.5, 1.98, 285.40], [60, 185, 15.5, 1.72, 318.75], [100, 185, 19.5, 1.40, 348.98],
+        [80, 170, 17.5, 1.90, 271.71], [80, 170, 17.5, 1.85, 308.64], [80, 170, 17.5, 1.82, 301.34], [80, 170, 17.5, 1.88, 289.50], [80, 170, 17.5, 1.84, 296.12]];
+      return { headers: ['Velocidad_rpm', 'Temperatura_C', 'Humedad_pct', 'IE', 'Densidad'], rows: rows.map(r => r.map(String)),
+        desir: { IE: { goal: 'target', L: 1.70, T: 1.80, U: 1.90, s: 1, t: 1, w: 1, model: 'all' }, Densidad: { goal: 'min', T: 270, U: 320, L: NaN, s: 1, t: 1, w: 1, model: 'all' } } };
+    },
     center: () => {
       const rows = [[30, 150, 39.3], [40, 150, 40.9], [30, 160, 40.0], [40, 160, 41.5], [35, 155, 40.3], [35, 155, 40.5], [35, 155, 40.7], [35, 155, 40.2], [35, 155, 40.6]];
       return { headers: ['Tiempo_min', 'Temperatura_F', 'Rendimiento'], rows: rows.map(r => r.map(String)) };
@@ -481,6 +487,7 @@
   function renderAnalysis() {
     renderTermList();
     GEnhance(state, runModel);
+    if (window.GDesirUpdate) GDesirUpdate(state);
     const prep = state.prep, fit = state.fit, est = state.est, sm = fit.summary, a = state.opts.alpha;
     const warn = [];
     prep.notes.forEach(n => warn.push(['info', n]));
@@ -821,7 +828,17 @@
     <li><b>Análisis.</b> La app detecta qué efectos son estimables, cuáles están en alias y cuáles se confunden con bloques. Seleccione los términos del modelo.</li>
     <li><b>Gráficas y supuestos.</b> Identifique efectos activos y valide normalidad, varianza constante e independencia antes de concluir.</li>
     <li><b>Predicción.</b> Estime la respuesta en una combinación de factores o busque la mejor combinación.</li>
+    <li><b>Deseabilidad.</b> Si midió dos o más respuestas, combínelas para elegir la condición que mejor equilibra todas las especificaciones.</li>
   </ol>
+  <h2>Deseabilidad: decidir con varias respuestas</h2>
+  <p>Cuando una condición mejora una respuesta y empeora otra, la función de deseabilidad de Derringer y Suich convierte cada respuesta en una calificación <i>d</i> entre 0 y 1 y las combina en <i>D</i>, la media geométrica (ponderada por la importancia). Pasos:</p>
+  <ol>
+    <li>Para cada respuesta defina el objetivo (maximizar, minimizar o valor objetivo) y sus límites: L (mínimo aceptable), T (ideal) y U (máximo aceptable).</li>
+    <li>Calcule d en cada condición; la pestaña muestra la sustitución numérica con el botón <b>Ver cálculo</b>.</li>
+    <li>Calcule D = (d₁ · d₂ ··· d<sub>m</sub>)<sup>1/m</sup>. Basta una d = 0 para que D = 0.</li>
+    <li>Elija la condición con mayor D. Con curvatura significativa, decida con las condiciones observadas (tabla A); el modelo de primer orden no predice bien el interior de la región.</li>
+  </ol>
+  <p>Ejemplo: cargue el conjunto “2³⁻¹ con 5 centros y 2 respuestas”. En el centro, IE = 1.858 y densidad = 293.46: d(IE) = (1.90 − 1.858)/(1.90 − 1.80) = 0.42, d(densidad) = (320 − 293.46)/(320 − 270) = 0.53 y D = √(0.42 × 0.53) = 0.47.</p>
   <h2>Qué prueba usar y cuándo</h2>
   <ul>
     <li><b>Con réplicas o puntos centrales</b> (gl de error &gt; 0): pruebas F del ANOVA y t de los coeficientes. Si hay combinaciones repetidas, el error se divide en <i>falta de ajuste</i> y <i>error puro</i>.</li>
@@ -848,6 +865,7 @@
   <ul>
     <li>Montgomery, D. C. <i>Design and Analysis of Experiments</i>, caps. 6–8.</li>
     <li>Box, G. E. P., Hunter, J. S. y Hunter, W. G. <i>Statistics for Experimenters</i>.</li>
+    <li>Derringer, G. y Suich, R. (1980). Simultaneous optimization of several response variables. <i>Journal of Quality Technology</i>, 12(4), 214–219.</li>
     <li>Lenth, R. V. (1989). Quick and easy analysis of unreplicated factorials. <i>Technometrics</i>, 31(4), 469–473.</li>
     <li>Royston, P. (1995). Algorithm AS R94: Shapiro-Wilk W test. <i>Applied Statistics</i>, 44(4), 547–551.</li>
   </ul>`;

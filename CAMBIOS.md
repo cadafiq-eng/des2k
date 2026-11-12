@@ -1,3 +1,13 @@
+# DOE 2ᵏ · versión 1.3.0 — 12 noviembre 2026
+
+- Nueva pestaña **7 · Deseabilidad** para decidir con dos o más respuestas (Derringer y Suich, 1980). Para cada respuesta se elige el objetivo (maximizar, minimizar o valor objetivo), los límites L, T y U, los exponentes s y t, la importancia y el modelo.
+- **A. Condiciones observadas:** d y D con las medias de cada combinación ensayada (incluye la media de los puntos centrales). Es el criterio recomendado cuando la curvatura es significativa.
+- **B. Búsqueda con modelos:** ajusta un modelo por respuesta con las opciones de Análisis (bloques, curvatura, α) y evalúa D en los puntos del diseño, vértices y centro, mallas de 3, 5 u 11 niveles. Avisa si la curvatura es significativa, si un modelo está saturado o si no hay puntos centrales.
+- Botón **Ver cálculo** con la sustitución numérica de cada d y de D; exportación a CSV.
+- Nuevo ejemplo: 2³⁻¹ con 5 puntos centrales y dos respuestas (extrusión de botana: IE y densidad) con especificaciones precargadas. Resultado en el centro: d(IE) = 0.42, d(densidad) = 0.531, D = 0.472.
+- Nueva sección de ayuda sobre deseabilidad y referencia a Derringer y Suich (1980).
+- Archivos nuevos: `js/desirability.js` (funciones), `js/desir-ui.js` (interfaz) y `tests/desirability.cjs`. Caché PWA v1.3.0.
+
 # DOE 2ᵏ · versión 1.2.2 — 5 noviembre 2026
 
 - Corrección: la validación de generadores de bloque revisaba cada generador por separado, pero no sus interacciones generalizadas. Aceptaba, por ejemplo, ABC y ABCF en un 2⁶, cuyo producto confunde el efecto principal F con los bloques. Ahora `Design.checkBlockGens` revisa todos los productos de subconjuntos de generadores (con sus alias en diseños fraccionados) y también su independencia; el mensaje indica el producto que causa el problema.

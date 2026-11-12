@@ -30,6 +30,7 @@
   <button role="tab" data-tab="plots">4 · Gráficas</button>
   <button role="tab" data-tab="diag">5 · Supuestos</button>
   <button role="tab" data-tab="opt">6 · Predicción</button>
+  <button role="tab" data-tab="desir">7 · Deseabilidad</button>
   <button role="tab" data-tab="help">Ayuda</button>
 </nav>
 
@@ -114,6 +115,7 @@
             <option value="frac">2⁴⁻¹ (I = ABCD): tasa de filtración (Montgomery 8.1)</option>
             <option value="etch">2³ con 2 réplicas: grabado por plasma (Montgomery 6.1)</option>
             <option value="center">2² con 5 puntos centrales: rendimiento (Montgomery 6.7)</option>
+            <option value="botana">2³⁻¹ con 5 centros y 2 respuestas: extrusión de botana (deseabilidad)</option>
           </select></label>
       </div>
       <div>
@@ -243,6 +245,56 @@
   </div>
 </section>
 
+<!-- ======================= DESEABILIDAD ======================= -->
+<section id="tab-desir" class="tab">
+  <div id="dsEmpty" class="empty">Cargue datos con dos o más columnas de respuesta y presione <b>Analizar</b> en la pestaña Datos. La deseabilidad usa los mismos factores, bloques y opciones del modelo.</div>
+  <div id="dsBody" hidden>
+    <div class="card">
+      <h2>Respuestas a combinar</h2>
+      <p class="hint">Seleccione dos o más respuestas. Cada una se convierte en una deseabilidad individual <i>d</i> entre 0 (inaceptable) y 1 (ideal) y se combinan en la deseabilidad global <i>D</i> = (d₁<sup>w₁</sup> · d₂<sup>w₂</sup> ··· )<sup>1/Σw</sup> (Derringer y Suich, 1980). Si alguna d = 0, D = 0.</p>
+      <div id="dsResp" class="chips"></div>
+    </div>
+    <div class="card">
+      <h2>Especificaciones</h2>
+      <div class="table-wrap"><table class="tbl spec-tbl" id="dsSpec"></table></div>
+      <details class="hint"><summary>Fórmulas de la deseabilidad individual</summary>
+        <ul>
+          <li><b>Maximizar:</b> d = 0 si y ≤ L; d = [(y − L)/(T − L)]<sup>s</sup> si L &lt; y &lt; T; d = 1 si y ≥ T.</li>
+          <li><b>Minimizar:</b> d = 1 si y ≤ T; d = [(U − y)/(U − T)]<sup>t</sup> si T &lt; y &lt; U; d = 0 si y ≥ U.</li>
+          <li><b>Valor objetivo:</b> d = [(y − L)/(T − L)]<sup>s</sup> si L ≤ y ≤ T; d = [(U − y)/(U − T)]<sup>t</sup> si T ≤ y ≤ U; d = 0 fuera de [L, U].</li>
+          <li>Exponente 1: la deseabilidad cambia linealmente. Mayor que 1: más exigente (sólo valores cercanos a T dan d alta). Menor que 1: más tolerante.</li>
+          <li>La importancia (1 a 5) pondera cada respuesta en la media geométrica.</li>
+          <li>Los límites deben venir de una especificación, norma o preferencia del consumidor, no de los propios datos.</li>
+        </ul>
+      </details>
+      <div class="grid4">
+        <label>Región para la búsqueda con modelos
+          <select id="dsRegion">
+            <option value="design">Puntos del diseño (sin interpolar)</option>
+            <option value="cc">Vértices y centro</option>
+            <option value="corners">Vértices (−1, +1)</option>
+            <option value="grid3">Malla −1, 0, +1</option>
+            <option value="grid5">Malla −1, −0.5, 0, 0.5, +1</option>
+            <option value="grid11">Malla fina (11 niveles por factor)</option>
+          </select></label>
+      </div>
+      <div class="actions"><button id="btnDesir" class="primary">Calcular deseabilidad</button><button id="btnDesirCSV" class="ghost">Exportar (CSV)</button></div>
+      <div id="dsMsg"></div>
+    </div>
+    <div class="card">
+      <h2>A. Condiciones observadas (medias)</h2>
+      <p class="hint">Cálculo directo con las medias de cada combinación ensayada. Es el criterio más seguro cuando hay curvatura o el modelo no es confiable.</p>
+      <div id="dsObs"></div>
+    </div>
+    <div class="card">
+      <h2>B. Búsqueda con los modelos ajustados</h2>
+      <p class="hint">Se ajusta un modelo para cada respuesta (columna “Modelo” de las especificaciones), se predice cada respuesta en la región elegida y se calcula D en cada punto.</p>
+      <div id="dsMod"></div>
+    </div>
+    <div class="card" id="dsExplain"></div>
+  </div>
+</section>
+
 <!-- ======================= AYUDA ======================= -->
 <section id="tab-help" class="tab">
   <div class="card prose" id="helpContent"></div>
@@ -257,6 +309,8 @@
 <script src="js/analysis.js"></script>
 <script src="js/plots.js"></script>
 <script src="js/modules.js"></script>
+<script src="js/desirability.js"></script>
+<script src="js/desir-ui.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
