@@ -1,5 +1,9 @@
 # Pruebas realizadas
 
+## Versión 1.3.0 — deseabilidad (12 noviembre 2026)
+`node tests/desirability.cjs`: 32 comprobaciones correctas. Casos límite de maximizar, minimizar y valor objetivo; exponentes distintos de 1; ponderación por importancia; caso de la botana (centro: d(IE) = 0.42, d(densidad) = 0.531, D = 0.472; corrida 3: D = 0.071; corrida con IE fuera de especificación: D = 0); efectos y p de curvatura de ambos modelos (IE p = 0.0102; densidad p = 0.0046), y predicción en el centro igual a la media de los centros. `node tests/numerical.cjs` sigue en 33 comprobaciones correctas.
+Interfaz en Chrome headless con el ejemplo de la botana: tablas A y B, aviso de curvatura, cálculo detallado y cambio de región sin errores en consola.
+
 Fecha: 30 octubre 2026. Entorno: Windows, Node 24.14.1 y Chrome headless.
 
 ## Numéricas — 33 comprobaciones correctas

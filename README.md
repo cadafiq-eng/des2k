@@ -27,6 +27,8 @@ Aplicación web progresiva, sin dependencias externas, para diseñar y analizar 
 
 **Predicción**: valor ajustado con IC e IP; búsqueda de la combinación óptima (maximizar, minimizar o valor meta).
 
+**Deseabilidad (varias respuestas)**: funciones de Derringer y Suich (maximizar, minimizar, valor objetivo) con exponentes e importancia; D en las condiciones observadas y búsqueda con un modelo por respuesta; cálculo detallado y exportación CSV.
+
 ## Publicar en GitHub Pages
 
 1. Cree un repositorio y suba todo el contenido de esta carpeta (respetando las subcarpetas `css/`, `js/`, `icons/`).

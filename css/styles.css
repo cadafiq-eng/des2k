@@ -166,3 +166,10 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .gen-row .bg-note { grid-column: 1 / -1; margin: 8px 0 0; font-size: .85rem; }
 .bg-note ol { margin: 6px 0 0; padding-left: 20px; }
 .bg-note li { margin-bottom: 4px; }
+
+/* Deseabilidad */
+.spec-tbl input, .spec-tbl select { min-width: 84px; padding: 5px 6px; }
+.spec-tbl td { vertical-align: top; }
+.tbl tr.hl td { background: var(--ok-soft, var(--accent-soft)); font-weight: 600; }
+#dsExplain:empty { display: none; }
+#dsExplain ul.mono { padding-left: 18px; line-height: 1.7; }
