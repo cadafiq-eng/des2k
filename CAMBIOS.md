@@ -1,3 +1,9 @@
+# DOE 2ᵏ · versión 1.3.1 — 13 noviembre 2026
+
+- La columna **TipoPt** de la hoja de trabajo y del CSV ahora se llama **TipoPunto** (1 = punto factorial, 0 = punto central). Se agregó una nota bajo la hoja de trabajo que explica OrdenEst, OrdenCorrida y TipoPunto, y una entrada en la ayuda.
+- Al cargar datos se reconocen ambos nombres (TipoPunto y TipoPt), así que las hojas descargadas con versiones anteriores siguen funcionando.
+- Caché PWA v1.3.1.
+
 # DOE 2ᵏ · versión 1.3.0 — 12 noviembre 2026
 
 - Nueva pestaña **7 · Deseabilidad** para decidir con dos o más respuestas (Derringer y Suich, 1980). Para cada respuesta se elige el objetivo (maximizar, minimizar o valor objetivo), los límites L, T y U, los exponentes s y t, la importancia y el modelo.

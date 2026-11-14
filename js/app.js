@@ -177,7 +177,8 @@
       <label class="check" style="margin:0"><input type="radio" name="dsort" value="std" ${d.sortBy === 'std' ? 'checked' : ''}> Orden estándar</label></div>
       <div class="table-wrap short" style="max-height:520px"><table class="tbl" id="sheet"></table></div>
       <div class="actions"><button class="primary" id="btnUseDesign">Analizar con estas respuestas</button><button class="ghost" id="btnDlDesign">Descargar hoja (CSV)</button><button class="ghost" id="btnClearY">Borrar respuestas</button></div>
-      <p class="hint">Escriba las respuestas directamente o descargue la hoja, complétela en Excel y cárguela en la pestaña Datos.</p></div>`;
+      <p class="hint">Escriba las respuestas directamente o descargue la hoja, complétela en Excel y cárguela en la pestaña Datos.</p>
+      <p class="hint"><b>Columnas del CSV:</b> <i>OrdenEst</i> = orden estándar (de Yates); <i>OrdenCorrida</i> = orden aleatorio en que deben hacerse las corridas; <i>TipoPunto</i> = 1 si es un punto factorial (factores en −1 o +1) y 0 si es un punto central (factores en el nivel medio). La app usa TipoPunto para separar los centros, estimar el error puro y probar la curvatura.</p></div>`;
     $('designOut').innerHTML = h;
     renderSheet();
     if (d.p) { const f = () => renderAliasTable(+$('aliasOrdD').value); $('aliasOrdD').addEventListener('change', f); f(); }
@@ -220,7 +221,7 @@
   }
   function designDataset() {
     const d = state.design; const runs = d.runs.slice().sort((a, b) => a.run - b.run);
-    const headers = ['OrdenEst', 'OrdenCorrida', 'TipoPt', 'Bloque', ...d.factors.map(f => f.name), 'Respuesta'];
+    const headers = ['OrdenEst', 'OrdenCorrida', 'TipoPunto', 'Bloque', ...d.factors.map(f => f.name), 'Respuesta'];
     const rows = runs.map(r => [r.std, r.run, r.type, r.block, ...d.factors.map((f, j) => realOf(f, r.x[j])), r.y].map(String));
     const meta = {}; d.factors.forEach(f => { meta[f.name] = { low: f.low, high: f.high, unit: f.unit }; });
     return { headers, rows, meta, source: 'design' };
@@ -341,7 +342,7 @@
     const find = re => H.findIndex(h => re.test(h));
     let iBlock = find(/^(bloque|block)s?$/i); if (iBlock >= 0 && info[iBlock].distinct < 2) iBlock = -1;
     const iRun = find(/^(orden ?corrida|ordencorrida|run ?order|runorder|corrida)$/i);
-    const skip = /^(orden ?est|ordenest|std ?order|stdorder|tipo ?pt|tipopt|pttype|cen?ter ?pt|r[eé]plica|replicate|rep)$/i;
+    const skip = /^(orden ?est|ordenest|std ?order|stdorder|tipo ?pt|tipopt|tipo ?punto|tipopunto|pttype|cen?ter ?pt|r[eé]plica|replicate|rep)$/i;
     let iResp = find(/^(respuesta|response|y)$/i);
     const factorLike = j => j !== iBlock && j !== iRun && !skip.test(H[j]) && ((info[j].numeric && info[j].distinct >= 2 && info[j].distinct <= 3) || (!info[j].numeric && info[j].distinct === 2));
     if (iResp < 0) { for (let j = H.length - 1; j >= 0; j--) if (info[j].numeric && !factorLike(j) && j !== iBlock && j !== iRun && !skip.test(H[j])) { iResp = j; break; } }
@@ -843,6 +844,7 @@
   <ul>
     <li><b>Con réplicas o puntos centrales</b> (gl de error &gt; 0): pruebas F del ANOVA y t de los coeficientes. Si hay combinaciones repetidas, el error se divide en <i>falta de ajuste</i> y <i>error puro</i>.</li>
     <li><b>Sin réplicas</b> (modelo saturado): gráfica normal o semi-normal de efectos y método de Lenth (PSE, ME, SME). Después, reduzca el modelo para obtener un error.</li>
+    <li><b>TipoPunto</b> (en Minitab, <i>PtType</i>): 1 = punto factorial, 0 = punto central. Minitab usa además −1 para puntos axiales de superficie de respuesta, que esta app no genera. También se reconoce el nombre anterior, TipoPt.</li>
     <li><b>Puntos centrales:</b> la prueba de <i>curvatura</i> compara la media de los centros con la de los puntos factoriales. Si es significativa, el modelo de primer orden no basta y conviene un diseño central compuesto.</li>
     <li><b>Bloques:</b> se incluyen como efecto aditivo (codificación de suma cero). Las interacciones confundidas con bloques no se pueden estimar; aparecen como “confundidos con bloques”.</li>
     <li><b>Fraccionados:</b> cada estimación corresponde a una cadena de alias (p. ej. A + BCD). La resolución indica qué tan graves son las confusiones: III (principales con 2FI), IV (2FI entre sí), V (libres hasta 2FI).</li>
