@@ -1,7 +1,7 @@
 {
   "name": "DOE 2ᵏ — Diseño y análisis factorial",
   "short_name": "DOE 2ᵏ",
-  "description": "Diseño y análisis de experimentos factoriales 2^k completos y fraccionados, con bloques, puntos centrales, ANOVA, Lenth y diagnóstico de supuestos.",
+  "description": "Diseño y análisis de experimentos factoriales 2^k completos y fraccionados, con bloques, puntos centrales, ANOVA, Lenth, diagnóstico de supuestos y superficie de respuesta (pendiente ascendente, central compuesto y Box-Behnken).",
   "lang": "es-MX",
   "start_url": "./index.html",
   "scope": "./",

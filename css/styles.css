@@ -173,3 +173,18 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .tbl tr.hl td { background: var(--ok-soft, var(--accent-soft)); font-weight: 600; }
 #dsExplain:empty { display: none; }
 #dsExplain ul.mono { padding-left: 18px; line-height: 1.7; }
+
+/* ---------- Superficie de respuesta (pestaña 8) ---------- */
+.seg { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.seg button { flex: 1 1 200px; font-weight: 600; color: var(--muted); background: var(--surface); }
+.seg button.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+.rsm-flow { margin-bottom: 14px; }
+.rsm-flow summary { cursor: pointer; }
+.rsm-flow ol { margin: 8px 0 0; padding-left: 20px; }
+.rsm-flow li { margin-bottom: 4px; }
+#rsmRoot .holds small { font-weight: 500; color: var(--muted); }
+#rsmRoot input[type=range] { padding: 0; min-width: 140px; }
+#rsmRoot .tbl td input[type=text] { width: 90px; }
+#rsmRoot svg.plot { max-width: 640px; margin: 0 auto; }
+#rsmRoot .grid3 > *, #rsmRoot .grid4 > * { min-width: 0; }
+#rsmRoot label select { width: 100%; max-width: 100%; }

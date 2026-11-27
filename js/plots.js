@@ -109,21 +109,22 @@
     const c = st[i].map((v, j) => Math.round(v + (st[i + 1][j] - v) * f)); return `rgb(${c.join(',')})`;
   };
 
-  /** Mapa de contorno: z(x,y) en una malla [-1,1]² con isolíneas por marching squares */
-  P.contour = function ({ fz, title, xlabel, ylabel, nGrid, levels, xr, yr }) {
+  /** Contorno de fz sobre [lo, hi]² (por defecto [−1, 1]). overlay(sx, sy) devuelve SVG adicional (puntos, trayectorias). */
+  P.contour = function ({ fz, title, xlabel, ylabel, nGrid, levels, xr, yr, dom, overlay }) {
     const N = nGrid || 41; const W = 560, H = 460, m = { l: 62, r: 90, t: 34, b: 48 };
     const pw = W - m.l - m.r, ph = H - m.t - m.b;
+    const lo = dom ? dom[0] : -1, hi = dom ? dom[1] : 1, span = hi - lo;
+    const gx = j => lo + span * j / (N - 1), gy = i => lo + span * i / (N - 1);
     const Z = []; let zmin = Infinity, zmax = -Infinity;
-    for (let i = 0; i < N; i++) { Z.push([]); for (let j = 0; j < N; j++) { const x = -1 + 2 * j / (N - 1), y = -1 + 2 * i / (N - 1); const z = fz(x, y); Z[i].push(z); zmin = Math.min(zmin, z); zmax = Math.max(zmax, z); } }
-    const sx = x => m.l + (x + 1) / 2 * pw, sy = y => m.t + ph - (y + 1) / 2 * ph;
+    for (let i = 0; i < N; i++) { Z.push([]); for (let j = 0; j < N; j++) { const z = fz(gx(j), gy(i)); Z[i].push(z); zmin = Math.min(zmin, z); zmax = Math.max(zmax, z); } }
+    const sx = x => m.l + (x - lo) / span * pw, sy = y => m.t + ph - (y - lo) / span * ph;
     let s = `<svg viewBox="0 0 ${W} ${H}" class="plot"><text x="${(W - m.r + m.l) / 2}" y="20" class="pt-title" text-anchor="middle">${esc(title)}</text>`;
     const cw = pw / (N - 1), ch = ph / (N - 1);
     for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) {
       const t = (Z[i][j] - zmin) / (zmax - zmin || 1);
-      s += `<rect x="${(sx(-1 + 2 * j / (N - 1)) - cw / 2).toFixed(1)}" y="${(sy(-1 + 2 * i / (N - 1)) - ch / 2).toFixed(1)}" width="${(cw + 0.6).toFixed(1)}" height="${(ch + 0.6).toFixed(1)}" fill="${P.color(t)}"/>`;
+      s += `<rect x="${(sx(gx(j)) - cw / 2).toFixed(1)}" y="${(sy(gy(i)) - ch / 2).toFixed(1)}" width="${(cw + 0.6).toFixed(1)}" height="${(ch + 0.6).toFixed(1)}" fill="${P.color(t)}"/>`;
     }
     const lv = P.niceTicks(zmin, zmax, levels || 8).ticks.filter(v => v > zmin && v < zmax);
-    const gx = j => -1 + 2 * j / (N - 1), gy = i => -1 + 2 * i / (N - 1);
     lv.forEach(L => {
       let d = '';
       for (let i = 0; i < N - 1; i++) for (let j = 0; j < N - 1; j++) {
@@ -138,9 +139,10 @@
       let best = null; const h2 = Math.floor(N / 2); const cand = []; for (let t = 1; t < N - 1; t++) { cand.push([h2, t], [t, h2]); } cand.forEach(([i, j]) => { const dz = Math.abs(Z[i][j] - L); if (!best || dz < best.dz) best = { dz, i, j }; });
       if (best) s += `<text x="${sx(gx(best.j))}" y="${sy(gy(best.i))}" class="pt-clab" text-anchor="middle">${ft(L)}</text>`;
     });
-    [-1, -0.5, 0, 0.5, 1].forEach(v => {
-      s += `<text x="${sx(v)}" y="${m.t + ph + 16}" text-anchor="middle" class="pt-tick">${xr ? ft(xr(v)) : v}</text><text x="${m.l - 6}" y="${sy(v) + 4}" text-anchor="end" class="pt-tick">${yr ? ft(yr(v)) : v}</text>`;
+    [0, 0.25, 0.5, 0.75, 1].map(f => lo + span * f).forEach(v => {
+      s += `<text x="${sx(v)}" y="${m.t + ph + 16}" text-anchor="middle" class="pt-tick">${xr ? ft(xr(v)) : ft(+v.toFixed(3))}</text><text x="${m.l - 6}" y="${sy(v) + 4}" text-anchor="end" class="pt-tick">${yr ? ft(yr(v)) : ft(+v.toFixed(3))}</text>`;
     });
+    if (overlay) s += `<g>${overlay(sx, sy)}</g>`;
     s += `<rect x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" class="pt-frame"/>`;
     const lx = W - m.r + 22; for (let k = 0; k < 50; k++) s += `<rect x="${lx}" y="${m.t + ph - (k + 1) * ph / 50}" width="16" height="${ph / 50 + 0.5}" fill="${P.color(k / 49)}"/>`;
     P.niceTicks(zmin, zmax, 5).ticks.filter(v => v >= zmin && v <= zmax).forEach(v => { const y = m.t + ph - (v - zmin) / (zmax - zmin || 1) * ph; s += `<text x="${lx + 20}" y="${y + 4}" class="pt-tick">${ft(v)}</text>`; });
