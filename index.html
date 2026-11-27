@@ -12,11 +12,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="DOE 2ᵏ">
   <link rel="stylesheet" href="css/styles.css">
+  <script>try{var f=+localStorage.getItem('doe2k-fs');if(f>0)document.documentElement.style.setProperty('--fs',f);}catch(e){}</script>
 </head>
 <body>
 <header class="appbar">
   <div class="brand"><span class="logo">2<sup>k</sup></span><div><strong>DOE 2ᵏ</strong><small>Diseño y análisis de experimentos factoriales y superficie de respuesta</small></div></div>
-  <div class="bar-actions"><button id="themeToggle" class="ghost">Tema: sistema</button>
+  <div class="bar-actions"><span class="fs-ctl" role="group" aria-label="Tamaño de letra"><button id="fsDown" class="ghost" title="Reducir tamaño de letra" aria-label="Reducir tamaño de letra">A−</button><button id="fsUp" class="ghost" title="Aumentar tamaño de letra" aria-label="Aumentar tamaño de letra">A+</button></span><button id="themeToggle" class="ghost">Tema: sistema</button>
     <button id="btnInstall" class="ghost" hidden>⤓ Instalar app</button>
     <button id="btnExport" class="ghost">Exportar resultados (CSV)</button>
     <button id="btnPrint" class="ghost">Imprimir reporte</button>
