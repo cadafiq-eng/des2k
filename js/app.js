@@ -489,6 +489,7 @@
     renderTermList();
     GEnhance(state, runModel);
     if (window.GDesirUpdate) GDesirUpdate(state);
+    if (window.GRsmUpdate) GRsmUpdate(state);
     const prep = state.prep, fit = state.fit, est = state.est, sm = fit.summary, a = state.opts.alpha;
     const warn = [];
     prep.notes.forEach(n => warn.push(['info', n]));
@@ -830,7 +831,16 @@
     <li><b>Gráficas y supuestos.</b> Identifique efectos activos y valide normalidad, varianza constante e independencia antes de concluir.</li>
     <li><b>Predicción.</b> Estime la respuesta en una combinación de factores o busque la mejor combinación.</li>
     <li><b>Deseabilidad.</b> Si midió dos o más respuestas, combínelas para elegir la condición que mejor equilibra todas las especificaciones.</li>
+    <li><b>Superficie de respuesta.</b> Si la región actual está lejos del óptimo, siga la pendiente ascendente o descendente; cerca del óptimo (curvatura significativa), use un diseño central compuesto o Box-Behnken y ajuste el modelo de segundo orden.</li>
   </ol>
+  <h2>Superficie de respuesta (pestaña 8)</h2>
+  <p>La metodología de superficie de respuesta (MSR) busca las condiciones que optimizan una respuesta en forma secuencial (Box y Wilson, 1951).</p>
+  <ol>
+    <li><b>A · Pendiente ascendente/descendente.</b> Con el modelo de primer orden ŷ = b₀ + Σ bⱼxⱼ de la pestaña Análisis (o capturado a mano), la dirección de máximo aumento es proporcional a los coeficientes. Se elige un factor base y su incremento Δx<sub>base</sub>; los demás se mueven Δxⱼ = bⱼ·Δx<sub>base</sub>/|b<sub>base</sub>| (con el signo contrario para minimizar). Se corre el experimento en cada paso hasta que la respuesta deja de mejorar; ese punto es el centro de la nueva región. Ejemplo: cargue “2² con 5 puntos centrales” en Datos y abra la pestaña 8, o use el botón del ejemplo 11.1 de Montgomery.</li>
+    <li><b>B · Diseño de segundo orden.</b> <i>Central compuesto</i> (CCD): 2ᵏ (o 2ᵏ⁻¹) + 2k puntos axiales a distancia α + centros. α = F<sup>¼</sup> lo hace rotable; α ortogonal hace independientes los coeficientes cuadráticos; con dos bloques (factorial | axial) el α de bloqueo ortogonal evita que el bloque sesgue los coeficientes. Variantes: circunscrito (axiales fuera de ±1), inscrito (axiales en los límites) y centrado en caras (α = 1, tres niveles). <i>Box-Behnken</i> (k = 3 a 7): tres niveles, sin vértices.</li>
+    <li><b>C · Análisis de segundo orden.</b> Ajuste del modelo ŷ = b₀ + Σ bᵢxᵢ + Σ bᵢᵢxᵢ² + ΣΣ bᵢⱼxᵢxⱼ con ANOVA (lineal, cuadrático, interacción, falta de ajuste y error puro). El punto estacionario es x<sub>s</sub> = −½B⁻¹b. El análisis canónico clasifica la superficie con los valores propios de B: todos negativos = máximo; todos positivos = mínimo; signos distintos = punto de silla; alguno cercano a cero = cresta. Si el punto estacionario es de silla o está fuera de la región, el análisis de cresta da la mejor condición a cada distancia del centro.</li>
+  </ol>
+  <p>Ejemplos incluidos: CCD rotable con dos factores (Montgomery, ejemplo 11.2: máximo en 86.9 min y 176.5 °F, ŷ = 80.21) y un Box-Behnken de tres factores con datos simulados.</p>
   <h2>Deseabilidad: decidir con varias respuestas</h2>
   <p>Cuando una condición mejora una respuesta y empeora otra, la función de deseabilidad de Derringer y Suich convierte cada respuesta en una calificación <i>d</i> entre 0 y 1 y las combina en <i>D</i>, la media geométrica (ponderada por la importancia). Pasos:</p>
   <ol>
@@ -844,8 +854,8 @@
   <ul>
     <li><b>Con réplicas o puntos centrales</b> (gl de error &gt; 0): pruebas F del ANOVA y t de los coeficientes. Si hay combinaciones repetidas, el error se divide en <i>falta de ajuste</i> y <i>error puro</i>.</li>
     <li><b>Sin réplicas</b> (modelo saturado): gráfica normal o semi-normal de efectos y método de Lenth (PSE, ME, SME). Después, reduzca el modelo para obtener un error.</li>
-    <li><b>TipoPunto</b> (en Minitab, <i>PtType</i>): 1 = punto factorial, 0 = punto central. Minitab usa además −1 para puntos axiales de superficie de respuesta, que esta app no genera. También se reconoce el nombre anterior, TipoPt.</li>
-    <li><b>Puntos centrales:</b> la prueba de <i>curvatura</i> compara la media de los centros con la de los puntos factoriales. Si es significativa, el modelo de primer orden no basta y conviene un diseño central compuesto.</li>
+    <li><b>TipoPunto</b> (en Minitab, <i>PtType</i>): 1 = punto factorial, 0 = punto central. En los diseños de superficie de respuesta de la pestaña 8 se usan además −1 (punto axial) y 2 (punto en arista de Box-Behnken). También se reconoce el nombre anterior, TipoPt.</li>
+    <li><b>Puntos centrales:</b> la prueba de <i>curvatura</i> compara la media de los centros con la de los puntos factoriales. Si es significativa, el modelo de primer orden no basta y conviene un diseño central compuesto (pestaña 8 · Superficie de respuesta).</li>
     <li><b>Bloques:</b> se incluyen como efecto aditivo (codificación de suma cero). Las interacciones confundidas con bloques no se pueden estimar; aparecen como “confundidos con bloques”.</li>
     <li><b>Fraccionados:</b> cada estimación corresponde a una cadena de alias (p. ej. A + BCD). La resolución indica qué tan graves son las confusiones: III (principales con 2FI), IV (2FI entre sí), V (libres hasta 2FI).</li>
   </ul>
@@ -865,7 +875,10 @@
 3,1,155,35,40.3</pre>
   <h2>Referencias</h2>
   <ul>
-    <li>Montgomery, D. C. <i>Design and Analysis of Experiments</i>, caps. 6–8.</li>
+    <li>Montgomery, D. C. <i>Design and Analysis of Experiments</i>, caps. 6–8 y 11.</li>
+    <li>Myers, R. H., Montgomery, D. C. y Anderson-Cook, C. M. <i>Response Surface Methodology</i>. Wiley.</li>
+    <li>Box, G. E. P. y Wilson, K. B. (1951). On the experimental attainment of optimum conditions. <i>Journal of the Royal Statistical Society B</i>, 13(1), 1–45.</li>
+    <li>Box, G. E. P. y Behnken, D. W. (1960). Some new three level designs for the study of quantitative variables. <i>Technometrics</i>, 2(4), 455–475.</li>
     <li>Box, G. E. P., Hunter, J. S. y Hunter, W. G. <i>Statistics for Experimenters</i>.</li>
     <li>Derringer, G. y Suich, R. (1980). Simultaneous optimization of several response variables. <i>Journal of Quality Technology</i>, 12(4), 214–219.</li>
     <li>Lenth, R. V. (1989). Quick and easy analysis of unreplicated factorials. <i>Technometrics</i>, 31(4), 469–473.</li>

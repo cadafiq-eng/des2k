@@ -29,6 +29,11 @@ Aplicación web progresiva, sin dependencias externas, para diseñar y analizar 
 
 **Deseabilidad (varias respuestas)**: funciones de Derringer y Suich (maximizar, minimizar, valor objetivo) con exponentes e importancia; D en las condiciones observadas y búsqueda con un modelo por respuesta; cálculo detallado y exportación CSV.
 
+**Superficie de respuesta (pestaña 8)**
+- Pendiente ascendente/descendente a partir del modelo de primer orden del análisis 2ᵏ o de coeficientes capturados; captura de las corridas sobre la trayectoria y paso del mejor punto al diseño de segundo orden.
+- Diseño central compuesto (circunscrito, inscrito, centrado en caras; α rotable, ortogonal, de bloqueo ortogonal o personalizado; 2 bloques) y Box-Behnken (k = 3 a 7), con hoja de trabajo aleatorizada.
+- Modelo de segundo orden: ANOVA con falta de ajuste, ecuaciones codificada y real, punto estacionario, análisis canónico, análisis de cresta, optimización restringida, contorno, superficie 3D y residuales.
+
 ## Publicar en GitHub Pages
 
 1. Cree un repositorio y suba todo el contenido de esta carpeta (respetando las subcarpetas `css/`, `js/`, `icons/`).

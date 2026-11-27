@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DOE 2ᵏ — Diseño y análisis factorial</title>
-  <meta name="description" content="Diseño y análisis de experimentos factoriales 2^k completos y fraccionados, con bloques y puntos centrales.">
+  <meta name="description" content="Diseño y análisis de experimentos factoriales 2^k completos y fraccionados, con bloques y puntos centrales, y metodología de superficie de respuesta (pendiente ascendente, central compuesto y Box-Behnken).">
   <meta name="theme-color" content="#4f46e5">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -15,7 +15,7 @@
 </head>
 <body>
 <header class="appbar">
-  <div class="brand"><span class="logo">2<sup>k</sup></span><div><strong>DOE 2ᵏ</strong><small>Diseño y análisis de experimentos factoriales</small></div></div>
+  <div class="brand"><span class="logo">2<sup>k</sup></span><div><strong>DOE 2ᵏ</strong><small>Diseño y análisis de experimentos factoriales y superficie de respuesta</small></div></div>
   <div class="bar-actions"><button id="themeToggle" class="ghost">Tema: sistema</button>
     <button id="btnInstall" class="ghost" hidden>⤓ Instalar app</button>
     <button id="btnExport" class="ghost">Exportar resultados (CSV)</button>
@@ -31,6 +31,7 @@
   <button role="tab" data-tab="diag">5 · Supuestos</button>
   <button role="tab" data-tab="opt">6 · Predicción</button>
   <button role="tab" data-tab="desir">7 · Deseabilidad</button>
+  <button role="tab" data-tab="rsm">8 · Superficie de respuesta</button>
   <button role="tab" data-tab="help">Ayuda</button>
 </nav>
 
@@ -295,6 +296,11 @@
   </div>
 </section>
 
+<!-- ======================= SUPERFICIE DE RESPUESTA ======================= -->
+<section id="tab-rsm" class="tab">
+  <div id="rsmRoot"></div>
+</section>
+
 <!-- ======================= AYUDA ======================= -->
 <section id="tab-help" class="tab">
   <div class="card prose" id="helpContent"></div>
@@ -311,6 +317,8 @@
 <script src="js/modules.js"></script>
 <script src="js/desirability.js"></script>
 <script src="js/desir-ui.js"></script>
+<script src="js/rsm.js"></script>
+<script src="js/rsm-ui.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
