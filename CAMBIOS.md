@@ -1,3 +1,9 @@
+# DOE 2ᵏ · versión 1.4.1 — 26 noviembre 2026
+
+- Letra más grande en toda la app: texto base de 15 a 16 px, tablas de 12.8 a 14.7 px, notas de 12 a 14 px, etiquetas de los indicadores de 11.3 a 12.8 px; en las gráficas, números de los ejes de 11 a 12.5 px y títulos de ejes de 12 a 13.5 px.
+- Botones **A− / A+** en el encabezado: escalan toda la interfaz entre 85 % y 150 % (el texto de las gráficas hasta 120 % para que no se encime). La elección se guarda en el dispositivo y se aplica antes de dibujar la página. La impresión usa siempre el tamaño normal.
+- Caché PWA v1.4.1.
+
 # DOE 2ᵏ · versión 1.4.0 — 26 noviembre 2026
 
 Nueva pestaña **8 · Superficie de respuesta** con tres secciones. El módulo se conecta con el análisis 2ᵏ: toma el modelo de la pestaña 3, los datos de la pestaña 2 y lleva el mejor punto de la trayectoria al diseño de segundo orden.

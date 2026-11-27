@@ -7,6 +7,11 @@ let theme='system'; try {theme=localStorage.getItem('doe2k-theme')||theme;}catch
 function applyTheme(){document.documentElement.dataset.theme=theme; $('themeToggle').textContent='Tema: '+labels[themes.indexOf(theme)];window.dispatchEvent(new Event('resize'));}
 if(!themes.includes(theme))theme='system';
 $('themeToggle').onclick=()=>{theme=themes[(themes.indexOf(theme)+1)%3];try{localStorage.setItem('doe2k-theme',theme);}catch(e){}applyTheme();};applyTheme();
+// Tamaño de letra: escala toda la interfaz (rem) y, con tope, el texto de las gráficas
+const FS=[0.85,0.92,1,1.1,1.2,1.35,1.5]; let fs=1; try{fs=+localStorage.getItem('doe2k-fs')||1;}catch(e){}
+if($('fsUp')){const applyFs=()=>{let i=FS.indexOf(fs);if(i<0){i=2;fs=1;}document.documentElement.style.setProperty('--fs',fs);try{localStorage.setItem('doe2k-fs',fs);}catch(e){}
+ $('fsDown').disabled=i===0;$('fsUp').disabled=i===FS.length-1;const pct=Math.round(fs*100)+' %';$('fsDown').title='Reducir tamaño de letra ('+pct+')';$('fsUp').title='Aumentar tamaño de letra ('+pct+')';window.dispatchEvent(new Event('resize'));};
+ $('fsDown').onclick=()=>{const i=FS.indexOf(fs);if(i>0){fs=FS[i-1];applyFs();}};$('fsUp').onclick=()=>{const i=FS.indexOf(fs);if(i<FS.length-1){fs=FS[i+1];applyFs();}};applyFs();}
 let last=null, lastPrep=null;
 window.GEnhance=function(state,run){
  if(lastPrep!==state.prep){last=null;lastPrep=state.prep;}
